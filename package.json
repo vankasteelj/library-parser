@@ -1,0 +1,28 @@
+{
+    "name": "library-parser",
+    "version": "0.0.1",
+    "description": "Find your local media",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/vankasteelj/library-parser"
+    },
+    "keywords": [
+        "library",
+        "media",
+        "local",
+        "file"
+    ],
+    "contributors": {
+        "name": "vankasteelj"
+    },
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/vankasteelj/library-parser/issues"
+    },
+    "dependencies": {
+        "bluebird": "3.x.x",
+        "filewalker": "0.x.x",
+        "lodash": "3.x.x"
+    }
+}
