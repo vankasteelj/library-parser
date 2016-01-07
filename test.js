@@ -11,7 +11,7 @@ lp.scan().then(function (results) {
 /*var library;
 var LibraryParser = require('C:/GIT/library-parser/index');
 var lp = new LibraryParser({
-    paths: ['D:'],
+    paths: ['D:/Musique'],
     types: ['audio', 'video']
 }, true);
 
