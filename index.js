@@ -5,8 +5,14 @@ var debug, self,
     Path = require('path'),
     fs = require('fs'),
 
-    video = '3g2|3gp|3gp2|3gpp|60d|ajp|asf|asx|avchd|avi|bik|bix|box|cam|dat|divx|dmf|dv|dvr-ms|evo|flc|fli|flic|flv|flx|gvi|gvp|h264|m1v|m2p|m2ts|m2v|m4e|m4v|mjp|mjpeg|mjpg|mkv|moov|mov|movhd|movie|movx|mp4|mpe|mpeg|mpg|mpv|mpv2|mxf|nsv|nut|ogg|ogm|omf|ps|qt|ram|rm|rmvb|swf|ts|vfw|vid|video|viv|vivo|vob|vro|wm|wmv|wmx|wrap|wvx|wx|x264|xvid',
-    audio = 'wav|mp3|wma|flac|ape|aac|m4a|ogg';
+    video = {
+        all: '3g2|3gp|3gp2|3gpp|60d|ajp|asf|asx|avchd|avi|bik|bix|box|cam|dat|divx|dmf|dv|dvr-ms|evo|flc|fli|flic|flv|flx|gvi|gvp|h264|h265|m1v|m2p|m2ts|m2v|m4e|m4v|mjp|mjpeg|mjpg|mkv|moov|mov|movhd|movie|movx|mp4|mpe|mpeg|mpg|mpv|mpv2|mxf|nsv|nut|ogg|ogm|omf|ps|qt|ram|rm|rmvb|swf|ts|vfw|vid|video|viv|vivo|vob|vro|wm|wmv|wmx|wrap|wvx|wx|x264|x265|xvid',
+        commons: 'avi|divx|dv|flv|m2ts|m4v|mkv|mov|mp4|mpeg|mpg|off|wmv|xvid'
+    },
+    audio = {
+        all: 'aa|aac|aax|act|aiff|ape|au|flac|dvf|gsm|m4a|m4b|m4p|mp3|mpc|ogg|oga|opus|tta|wav|wma|wv|webm',
+        commons: 'aiff|ape|flac|m4a|m4b|m4p|mp3|mpc|ogg|oga|opus|wav|wma|webm'
+    };
 
 /*
  * Init
@@ -16,7 +22,8 @@ var LibraryParser = module.exports = function (opts, dbug) {
 
     this.options = {
         paths: opts.paths || opts,
-        types: opts.types || ['audio', 'video']
+        types: opts.types || ['audio', 'video'],
+        formats: opts.formats || 'commons'
     };
 
     debug = function () {
@@ -43,7 +50,7 @@ LibraryParser.prototype.scan = function () {
  * Update
  */
 LibraryParser.prototype.update = function (orig) {
-    debug('updating db');
+    debug('updating db with %s entries', orig.length);
     return Promise.all(this.options.paths.map(walker))
         .then(_.flatten)
         .filter(function (entry) {
@@ -86,16 +93,17 @@ var walker = function (path) {
 
         Filewalker(path, walkeropts)
             .on('file', function (file, props) {
-                debug('file parsed');
-                var type = filetype(Path.extname(file), self.options.types);
-                files.push({
-                    file: file,
-                    size: props.size,
-                    type: type
-                });
+                if (props.size > 100000) {
+                    debug('file parsed');
+                    files.push({
+                        file: file,
+                        size: props.size,
+                        type: filetype(Path.extname(file), self.options.types)
+                    });
+                }
             })
             .on('done', function () {
-                debug('found %s item(s)', files.length);
+                debug('found %s item(s) in %s', files.length, path);
                 resolve(files.map(function (f) {
                     return {
                         filename: Path.basename(f.file),
@@ -106,8 +114,11 @@ var walker = function (path) {
                 }));
             })
             .on('error', function (err) {
-                // ignore EPERM and EBUSY
-                if (err.errno == -4082 || err.errno == -4048) return;
+                // ignore EPERM, EBUSY, ENOENT
+                if (err.errno) {
+                    debug(err);
+                    return;
+                }
                 reject(err);
             })
             .walk();
@@ -116,8 +127,8 @@ var walker = function (path) {
 
 // determine the file type
 var filetype = function (ext, types) {
-    var v = new RegExp(video);
-    var a = new RegExp(audio);
+    var v = new RegExp(video['all']);
+    var a = new RegExp(audio['all']);
 
     if (ext && ext.match(a)) return 'audio';
     if (ext && ext.match(v)) return 'video';
@@ -127,8 +138,12 @@ var filetype = function (ext, types) {
 // regex for walker
 var accept = function (types) {
     var regxp = '\\.(?:';
-    if (types.indexOf('audio') !== -1) regxp += audio;
-    if (types.indexOf('video') !== -1) regxp += (regxp.length === 5 ? '' : '|') + video;
-    console.log(regxp)
+    if (self.options.formats.match(/all|commons/)) {
+        if (types.indexOf('audio') !== -1) regxp += audio[self.options.formats];
+        if (types.indexOf('video') !== -1) regxp += (regxp.length === 5 ? '' : '|') + video[self.options.formats];
+    } else {
+        regxp += self.options.formats;
+    }
+
     return new RegExp(regxp += ')$', 'i');
 };

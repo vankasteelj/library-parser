@@ -17,7 +17,8 @@ var library; // that will come handy later
 var LibraryParser = require('library-parser');
 var parser = new LibraryParser({
     paths: ['D:/Music', 'D:/Videos'], // mandatory
-    types: ['audio', 'video'] // default to both
+    types: ['audio', 'video'] // optionnal, default to both
+    formats: 'all' // optionnal, defaults to 'commons'
 });
 ```
 
@@ -65,6 +66,24 @@ Object {
 *Note: handy tip if you refuse to use a real db to store and explore the output, it's to use underscore or lodash: `_.filter(library, {type: 'audio'})`*
 
 ---
+
+### Formats: 
+The module can look for a whole bunch of filetypes, that you might not want.
+Here are the options for the `format` argument:
+
+1. video 'all':
+> '3g2|3gp|3gp2|3gpp|60d|ajp|asf|asx|avchd|avi|bik|bix|box|cam|dat|divx|dmf|dv|dvr-ms|evo|flc|fli|flic|flv|flx|gvi|gvp|h264|h265|m1v|m2p|m2ts|m2v|m4e|m4v|mjp|mjpeg|mjpg|mkv|moov|mov|movhd|movie|movx|mp4|mpe|mpeg|mpg|mpv|mpv2|mxf|nsv|nut|ogg|ogm|omf|ps|qt|ram|rm|rmvb|swf|ts|vfw|vid|video|viv|vivo|vob|vro|wm|wmv|wmx|wrap|wvx|wx|x264|x265|xvid'
+
+2. video 'commons' (default): 
+> 'avi|divx|dv|flv|m2ts|m4v|mkv|mov|mp4|mpeg|mpg|off|wmv|xvid'
+
+3. audio 'all':
+> 'aa|aac|aax|act|aiff|ape|au|flac|dvf|gsm|m4a|m4b|m4p|mp3|mpc|ogg|oga|opus|tta|wav|wma|wv|webm'
+
+4. audio 'commons' (default): 
+>'aiff|ape|flac|m4a|m4b|m4p|mp3|mpc|ogg|oga|opus|wav|wma|webm'
+
+You can also specify your own regex-like string.
 
 ### License GPL-3.0
 
