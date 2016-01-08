@@ -19,6 +19,7 @@ var parser = new LibraryParser({
     paths: ['D:/Music', 'D:/Videos'], // mandatory
     types: ['audio', 'video'] // optionnal, default to both
     formats: 'all' // optionnal, defaults to 'commons'
+    throttle: true // optionnal, defaults to false
 });
 ```
 
@@ -84,6 +85,17 @@ Here are the options for the `format` argument:
 >'aiff|ape|flac|m4a|m4b|m4p|mp3|mpc|ogg|oga|opus|wav|wma|webm'
 
 You can also specify your own regex-like string.
+
+---
+
+### Throttle:
+This argument is useful to throttle the number of simultaneous disk-operations, if you use an UI and don't want to kill it while the parser goes. It defaults to `false`, which means that the UI will probably freez on parsing.
+
+`throttle: true` will result in a maximum of 10 asynchronous jobs at the same time and should be a good compromise between speed and no negative effect on the UX.
+
+Possible values are: true (== 10), false, or an integer (usually 1 to 50).
+
+---
 
 ### License GPL-3.0
 

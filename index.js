@@ -23,7 +23,8 @@ var LibraryParser = module.exports = function (opts, dbug) {
     this.options = {
         paths: opts.paths || opts,
         types: opts.types || ['audio', 'video'],
-        formats: opts.formats || 'commons'
+        formats: opts.formats || 'commons',
+        throttle: opts.throttle || -1
     };
 
     debug = function () {
@@ -88,7 +89,8 @@ var walker = function (path) {
         var files = [];
         var walkeropts = {
             maxAttemps: 2,
-            matchRegExp: accept(self.options.types)
+            matchRegExp: accept(self.options.types),
+            maxPending: self.options.throttle === true ? 10 : self.options.throttle
         };
 
         Filewalker(path, walkeropts)
