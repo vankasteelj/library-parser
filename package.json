@@ -23,8 +23,6 @@
     "dependencies": {
         "bluebird": "3.x.x",
         "filewalker": "0.x.x",
-        "lodash": "3.x.x",
-        "musicmetadata": "2.x.x",
-        "object-assign": "4.x.x"
+        "lodash": "3.x.x"
     }
 }
