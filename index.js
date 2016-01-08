@@ -63,6 +63,14 @@ LibraryParser.prototype.update = function (orig) {
         }).bind(this);
 };
 
+// only keep newly added entries
+var unique = function (entry, orig) {
+    var dupe = _.find(orig, function (c) {
+        return c.path === entry.path;
+    })
+    return !dupe;
+};
+
 // removes inexistant files from db
 var outdated = function (files) {
     return Promise.all(files)
@@ -73,25 +81,16 @@ var outdated = function (files) {
         });
 };
 
-// only keep newly added entries
-var unique = function (entry, orig) {
-    var dupe = _.find(orig, function (c) {
-        return c.path === entry.path;
-    })
-    return !dupe;
-};
-
 /*
  * Scanner
  */
 var walker = function (path) {
     return new Promise(function (resolve, reject) {
-        var files = [];
         var walkeropts = {
             maxAttemps: 2,
             matchRegExp: accept(self.options.types),
             maxPending: self.options.throttle === true ? 10 : self.options.throttle
-        };
+        }, files = [];
 
         Filewalker(path, walkeropts)
             .on('file', function (file, props) {
@@ -129,15 +128,12 @@ var walker = function (path) {
 
 // determine the file type
 var filetype = function (ext, types) {
-    var v = new RegExp(video['all']);
-    var a = new RegExp(audio['all']);
-
-    if (ext && ext.match(a)) return 'audio';
-    if (ext && ext.match(v)) return 'video';
+    if (ext && ext.match(new RegExp(audio['all']))) return 'audio';
+    if (ext && ext.match(new RegExp(video['all']))) return 'video';
     return null;
 };
 
-// regex for walker
+// regex for walker (texas ranger)
 var accept = function (types) {
     var regxp = '\\.(?:';
     if (self.options.formats.match(/all|commons/)) {
