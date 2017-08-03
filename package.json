@@ -1,6 +1,6 @@
 {
     "name": "library-parser",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "Find your local media",
     "main": "index.js",
     "repository": {
