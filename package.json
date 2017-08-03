@@ -21,8 +21,7 @@
         "url": "https://github.com/vankasteelj/library-parser/issues"
     },
     "dependencies": {
-        "bluebird": "3.x.x",
         "filewalker": "0.x.x",
-        "lodash": "3.x.x"
+        "lodash": "4.x.x"
     }
 }
