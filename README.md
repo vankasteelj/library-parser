@@ -12,10 +12,10 @@ npm install library-parser
 - Initialize it in node:
 
 ```js
-var library; // that will come handy later
+let library = null; // that will come handy later
 
-var LibraryParser = require('library-parser');
-var parser = new LibraryParser({
+const LibraryParser = require('library-parser');
+const parser = new LibraryParser({
     paths: ['D:/Music', 'D:/Videos'], // mandatory
     types: ['audio', 'video'] // optionnal, default to both
     formats: 'all' // optionnal, defaults to 'commons'
@@ -26,20 +26,20 @@ var parser = new LibraryParser({
 - Scan your local directories:
 
 ```js
-parser.scan().then(function (results) {
+parser.scan().then((results) => {
     console.log(results);
     library = results; // keep it somewhere safe to be able to use .update()
-}).catch(function(e){console.error(e)});
+}).catch(console.error);
 ```
 *Note: you can add fields to `library` if you want, they will be kept when updating. Make sure you leave `item['path']` untouched though.*
 
 - Update:
 
 ```js
-parser.update(library).then(function (results) {
+parser.update(library).then((results) => {
     console.log(results);
     library = results;
-}).catch(function(e){console.error(e)});
+}).catch(console.error);
 ```
 
 ---
